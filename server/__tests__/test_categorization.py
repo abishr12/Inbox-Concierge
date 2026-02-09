@@ -49,7 +49,7 @@ def test_emails():
             "snippet": "Our production server is experiencing downtime. Immediate action required.",
             "from": "ops@company.com",
             "date": "Mon, 9 Feb 2026 15:45:23 +0000",
-            "category": ""
+            "label": ""
         },
         {
             "id": "test-2",
@@ -57,7 +57,7 @@ def test_emails():
             "snippet": "Your weekly digest of technology news and updates",
             "from": "newsletter@techdigest.com",
             "date": "Mon, 9 Feb 2026 14:30:00 +0000",
-            "category": ""
+            "label": ""
         },
         {
             "id": "test-3",
@@ -65,7 +65,7 @@ def test_emails():
             "snippet": "Your package has been delivered. Track your order here.",
             "from": "no-reply@amazon.com",
             "date": "Mon, 9 Feb 2026 12:00:00 +0000",
-            "category": ""
+            "label": ""
         }
     ]
 
@@ -110,8 +110,8 @@ async def test_categorize_emails_output_structure(test_emails, sample_buckets):
     Test that the categorization output has the expected structure.
     
     This validates that:
-    1. Each email gets a category assigned
-    2. Categories are valid bucket IDs
+    1. Each email gets a label assigned
+    2. Labels are valid bucket IDs
     3. All emails are returned
     """
     result = await categorize_emails(test_emails, sample_buckets)
@@ -120,14 +120,14 @@ async def test_categorize_emails_output_structure(test_emails, sample_buckets):
     assert isinstance(result, list), "Result should be a list"
     assert len(result) == len(test_emails), "Should return same number of emails"
     
-    # Validate each email has a category
+    # Validate each email has a label
     bucket_ids = {bucket["id"] for bucket in sample_buckets}
     for email in result:
-        assert "category" in email, f"Email {email['id']} missing category"
-        assert email["category"] in bucket_ids, f"Invalid category for email {email['id']}"
+        assert "label" in email, f"Email {email['id']} missing label"
+        assert email["label"] in bucket_ids, f"Invalid label for email {email['id']}"
     
     print("\n=== Output Structure Test ===")
-    print(f"✓ All {len(result)} emails have valid categories")
+    print(f"✓ All {len(result)} emails have valid labels")
     print(f"Result: {result}")
 
 
@@ -172,7 +172,7 @@ async def test_categorization_agent_response():
             "snippet": "We detected unusual activity on your account",
             "from": "security@bank.com",
             "date": "Mon, 9 Feb 2026 15:00:00 +0000",
-            "category": ""
+            "label": ""
         }
     ]
     
@@ -192,8 +192,8 @@ async def test_categorization_agent_response():
     result = await categorize_emails(emails, buckets)
     
     # The urgent email should go to "Important" bucket
-    assert result[0]["category"] == "important-bucket", \
-        f"Urgent email should be categorized as Important, got {result[0]['category']}"
+    assert result[0]["label"] == "important-bucket", \
+        f"Urgent email should be categorized as Important, got {result[0]['label']}"
     
     print("\n=== Categorization Logic Test ===")
     print("✓ Urgent email correctly categorized as Important")

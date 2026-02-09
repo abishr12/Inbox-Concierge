@@ -31,11 +31,11 @@ async def categorize_emails(
     categorized_emails = []
     for email in emails:
         email_copy = email.copy()
-        category = result_map.get(email["id"], {})
+        label = result_map.get(email["id"], {})
         email_copy.update(
             {
-                "category_id": category.get("bucket_id", ""),
-                "category_name": category.get("bucket_name", ""),
+                "label_id": label.get("bucket_id", ""),
+                "label_name": label.get("bucket_name", ""),
             }
         )
 

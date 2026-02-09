@@ -57,7 +57,7 @@ async def remove_bucket(bucket_id: str):
         return []
 
     # Find emails that need recategorization
-    affected_emails = [e for e in all_emails if e.get("category_id") == bucket_id]
+    affected_emails = [e for e in all_emails if e.get("label_id") == bucket_id]
 
     # If no emails were in the deleted bucket, return all emails unchanged
     if not affected_emails:
@@ -71,11 +71,11 @@ async def remove_bucket(bucket_id: str):
     # Create a lookup map of the recategorized results
     recategorized_map = {e["id"]: e for e in recategorized_emails}
 
-    # Update the category fields in place for affected emails
+    # Update the label fields in place for affected emails
     for email in all_emails:
         if email["id"] in recategorized_map:
-            email["category_id"] = recategorized_map[email["id"]]["category_id"]
-            email["category_name"] = recategorized_map[email["id"]]["category_name"]
+            email["label_id"] = recategorized_map[email["id"]]["label_id"]
+            email["label_name"] = recategorized_map[email["id"]]["label_name"]
 
     storage_service.save_emails(all_emails)
     return all_emails

@@ -66,7 +66,7 @@ async def main():
             print("\n📋 Categorization Results:")
             for email in result:
                 bucket_name = next(
-                    (b['name'] for b in buckets if b['id'] == email.get('category', '')),
+                    (b['name'] for b in buckets if b['id'] == email.get('label', '')),
                     'Unknown'
                 )
                 print(f"\n  • {email['subject'][:50]}...")
@@ -90,11 +90,11 @@ async def main():
         if result:
             # Count emails per bucket
             from collections import Counter
-            category_counts = Counter(email.get('category', '') for email in result)
+            label_counts = Counter(email.get('label', '') for email in result)
             
             print("\n📊 Distribution:")
             for bucket in buckets:
-                count = category_counts.get(bucket['id'], 0)
+                count = label_counts.get(bucket['id'], 0)
                 print(f"  {bucket['name']}: {count} emails")
     except Exception as e:
         print(f"\n❌ Error during full categorization: {e}")

@@ -5,8 +5,8 @@
     "snippet": "Watch now | Neuroscientist and physical therapist Dr. Lara Boyd explains why there is no such thing as a “normal brain,” and how neuroplasticity reshapes us across life",
     "from": "\"Jacob J. Watson-Howland\" <naturewithjacob@substack.com>",
     "date": "Mon, 9 Feb 2026 16:27:16 +0000",
-    "category_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-    "category_name": "Newsletter"
+    "label_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    "label_name": "Newsletter"
   },
   {
     "id": "19c4336205e071ca",
@@ -14,8 +14,8 @@
     "snippet": "View jobs in San Francisco Bay Area",
     "from": "LinkedIn Job Alerts <jobalerts-noreply@linkedin.com>",
     "date": "Mon, 9 Feb 2026 16:22:22 +0000 (UTC)",
-    "category_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
-    "category_name": "Auto-archive"
+    "label_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+    "label_name": "Auto-archive"
   },
   {
     "id": "19c433164b4c48ef",
@@ -23,8 +23,8 @@
     "snippet": "Which ad are you still talking about? Share your top pick.",
     "from": "LinkedIn News <editors-noreply@linkedin.com>",
     "date": "Mon, 9 Feb 2026 16:17:13 +0000 (UTC)",
-    "category_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
-    "category_name": "Auto-archive"
+    "label_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+    "label_name": "Auto-archive"
   },
   {
     "id": "19c432c28d918257",
@@ -32,8 +32,8 @@
     "snippet": "Not the Funniest, the Smartest.",
     "from": "Greg Swan <gregswan@substack.com>",
     "date": "Mon, 9 Feb 2026 16:09:52 +0000",
-    "category_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-    "category_name": "Newsletter"
+    "label_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    "label_name": "Newsletter"
   },
   {
     "id": "19c43280695b630d",
@@ -41,8 +41,8 @@
     "snippet": "Authentically distracted",
     "from": "Rick Rubin <rickrubin@substack.com>",
     "date": "Mon, 9 Feb 2026 16:02:26 +0000",
-    "category_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-    "category_name": "Newsletter"
+    "label_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    "label_name": "Newsletter"
   },
   {
     "id": "19c432418eb1a763",
@@ -50,8 +50,8 @@
     "snippet": "As always, I am in earnest.",
     "from": "Bryan Caplan from Bet On It <betonit@substack.com>",
     "date": "Mon, 9 Feb 2026 16:00:55 +0000",
-    "category_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-    "category_name": "Newsletter"
+    "label_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    "label_name": "Newsletter"
   },
   {
     "id": "19c431439c541d9f",
@@ -59,8 +59,8 @@
     "snippet": "Your Weekly Stack: A digest of posts that's been assembled just for you",
     "from": "Substack <no-reply@substack.com>",
     "date": "Mon, 9 Feb 2026 15:45:23 +0000",
-    "category_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-    "category_name": "Newsletter"
+    "label_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    "label_name": "Newsletter"
   },
   {
     "id": "19c42f86f9d71d92",
@@ -68,8 +68,8 @@
     "snippet": "",
     "from": "\"Lightning ⚡️\" <bobby@lightningmeditations.com>",
     "date": "Mon,  9 Feb 2026 15:14:55 +0000",
-    "category_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-    "category_name": "Newsletter"
+    "label_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    "label_name": "Newsletter"
   },
   {
     "id": "19c42f4698d1c5e9",
@@ -77,8 +77,8 @@
     "snippet": "Your opinion matters! Seller Tideshake requests you to share your experience for your recent order with other Amazon shoppers. Please take a moment to review your recent Amazon purchase. 114-0162496-",
     "from": "no-reply <no-reply@amazon.com>",
     "date": "Mon, 9 Feb 2026 15:10:39 +0000",
-    "category_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
-    "category_name": "Can Wait"
+    "label_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+    "label_name": "Can Wait"
   },
   {
     "id": "19c42d7674f40a4d",
@@ -86,7 +86,7 @@
     "snippet": "Political lessons from the wide world of sports. And music.",
     "from": "\"Bill Kristol & Andrew Egger - The Bulwark\" <thebulwark+morningshots@substack.com>",
     "date": "Mon, 9 Feb 2026 14:37:46 +0000",
-    "category_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-    "category_name": "Newsletter"
+    "label_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    "label_name": "Newsletter"
   }
 ]

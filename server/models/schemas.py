@@ -9,8 +9,8 @@ class EmailThread(BaseModel):
     snippet: str
     from_: str = Field(alias="from")
     date: str
-    category_id: str
-    category_name: str
+    label_id: str
+    label_name: str
 
 
 class Bucket(BaseModel):
