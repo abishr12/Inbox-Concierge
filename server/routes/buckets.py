@@ -34,9 +34,8 @@ async def add_bucket(bucket: BucketCreate):
     if emails:
         categorized_emails = await categorization_service.categorize_emails(emails, buckets)
         storage_service.save_emails(categorized_emails)
-        return categorized_emails
     
-    return []
+    return new_bucket
 
 
 @router.post("/{bucket_id}")
@@ -53,29 +52,25 @@ async def remove_bucket(bucket_id: str):
 
     # Only recategorize emails that were in the deleted bucket
     all_emails = storage_service.get_emails()
-    if not all_emails:
-        return []
+    if all_emails:
+        # Find emails that need recategorization
+        affected_emails = [e for e in all_emails if e.get("label_id") == bucket_id]
 
-    # Find emails that need recategorization
-    affected_emails = [e for e in all_emails if e.get("label_id") == bucket_id]
+        # Recategorize only the affected emails if any exist
+        if affected_emails:
+            recategorized_emails = await categorization_service.categorize_emails(
+                affected_emails, buckets
+            )
 
-    # If no emails were in the deleted bucket, return all emails unchanged
-    if not affected_emails:
-        return all_emails
+            # Create a lookup map of the recategorized results
+            recategorized_map = {e["id"]: e for e in recategorized_emails}
 
-    # Recategorize only the affected emails
-    recategorized_emails = await categorization_service.categorize_emails(
-        affected_emails, buckets
-    )
+            # Update the label fields in place for affected emails
+            for email in all_emails:
+                if email["id"] in recategorized_map:
+                    email["label_id"] = recategorized_map[email["id"]]["label_id"]
+                    email["label_name"] = recategorized_map[email["id"]]["label_name"]
 
-    # Create a lookup map of the recategorized results
-    recategorized_map = {e["id"]: e for e in recategorized_emails}
-
-    # Update the label fields in place for affected emails
-    for email in all_emails:
-        if email["id"] in recategorized_map:
-            email["label_id"] = recategorized_map[email["id"]]["label_id"]
-            email["label_name"] = recategorized_map[email["id"]]["label_name"]
-
-    storage_service.save_emails(all_emails)
-    return all_emails
+            storage_service.save_emails(all_emails)
+    
+    return {"success": True, "deleted_bucket_id": bucket_id, "deleted_bucket_name": bucket_to_remove["name"]}

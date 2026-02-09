@@ -1,60 +1,59 @@
-'use client'
+"use client";
 
-import { useState, useRef, useEffect } from 'react'
-import type { Label } from '@/types'
+import type { Label } from "@/types";
+import { useEffect, useRef, useState } from "react";
 
 interface LabelsDropdownProps {
-  labels: Label[]
-  onDeleteLabel: (labelId: string) => void
-  onAddLabel: (name: string, description: string) => void
+  labels: Label[];
 }
 
-export default function LabelsDropdown({
-  labels,
-  onDeleteLabel,
-  onAddLabel,
-}: LabelsDropdownProps): React.ReactElement {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
+export default function LabelsDropdown({ labels }: LabelsDropdownProps): React.ReactElement {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const onDeleteLabel = (arg: string) => {};
+  const onAddLabel = (arg: string) => {};
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
       }
-    }
+    };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isOpen])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   const handleToggle = (): void => {
-    setIsOpen(!isOpen)
-  }
+    setIsOpen(!isOpen);
+  };
 
   const handleDelete = (labelId: string): void => {
-    onDeleteLabel(labelId)
-  }
+    onDeleteLabel(labelId);
+  };
 
   const handleAddNewClick = (): void => {
-    setIsOpen(false)
-    setIsModalOpen(true)
-  }
+    setIsOpen(false);
+    setIsModalOpen(true);
+  };
 
   const handleModalClose = (): void => {
-    setIsModalOpen(false)
-  }
+    setIsModalOpen(false);
+  };
 
   const handleModalSubmit = (name: string, description: string): void => {
-    onAddLabel(name, description)
-    setIsModalOpen(false)
-  }
+    onAddLabel(name, description);
+    setIsModalOpen(false);
+  };
 
   return (
     <>
@@ -65,12 +64,17 @@ export default function LabelsDropdown({
         >
           Labels
           <svg
-            className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
 
@@ -79,7 +83,7 @@ export default function LabelsDropdown({
             <div className="px-4 py-2 border-b border-gray-200">
               <h3 className="text-sm font-semibold text-gray-700">Labels</h3>
             </div>
-            
+
             <div className="max-h-64 overflow-y-auto">
               {labels.length === 0 ? (
                 <div className="px-4 py-3 text-sm text-gray-500 text-center">
@@ -134,42 +138,46 @@ export default function LabelsDropdown({
         />
       )}
     </>
-  )
+  );
 }
 
 interface AddLabelModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSubmit: (name: string, description: string) => void
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (name: string, description: string) => void;
 }
 
-function AddLabelModal({ isOpen, onClose, onSubmit }: AddLabelModalProps): React.ReactElement | null {
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [error, setError] = useState('')
+function AddLabelModal({
+  isOpen,
+  onClose,
+  onSubmit,
+}: AddLabelModalProps): React.ReactElement | null {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [error, setError] = useState("");
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent): void => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!name.trim()) {
-      setError('Name is required')
-      return
+      setError("Name is required");
+      return;
     }
 
-    onSubmit(name.trim(), description.trim())
-    setName('')
-    setDescription('')
-    setError('')
-  }
+    onSubmit(name.trim(), description.trim());
+    setName("");
+    setDescription("");
+    setError("");
+  };
 
   const handleClose = (): void => {
-    setName('')
-    setDescription('')
-    setError('')
-    onClose()
-  }
+    setName("");
+    setDescription("");
+    setError("");
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -187,7 +195,10 @@ function AddLabelModal({ isOpen, onClose, onSubmit }: AddLabelModalProps): React
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label htmlFor="label-name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="label-name"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -195,8 +206,8 @@ function AddLabelModal({ isOpen, onClose, onSubmit }: AddLabelModalProps): React
               type="text"
               value={name}
               onChange={(e) => {
-                setName(e.target.value)
-                setError('')
+                setName(e.target.value);
+                setError("");
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="e.g., Important"
@@ -205,7 +216,10 @@ function AddLabelModal({ isOpen, onClose, onSubmit }: AddLabelModalProps): React
           </div>
 
           <div>
-            <label htmlFor="label-description" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="label-description"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Description
             </label>
             <input
@@ -236,5 +250,5 @@ function AddLabelModal({ isOpen, onClose, onSubmit }: AddLabelModalProps): React
         </form>
       </div>
     </div>
-  )
+  );
 }

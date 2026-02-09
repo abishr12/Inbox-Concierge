@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense } from "react";
-import { useEmails } from "@/app/hooks/useEmails";
 import { useBuckets } from "@/app/hooks/useBuckets";
+import { useEmails } from "@/app/hooks/useEmails";
+import { Suspense } from "react";
 import EmailTable from "./components/EmailTable";
 import LabelsDropdown from "./components/LabelsDropdown";
 
@@ -25,26 +25,12 @@ function EmailPageContent(): React.ReactElement {
     console.log("Logout clicked");
   };
 
-  const handleAddLabel = (name: string, description: string): void => {
-    // TODO: Implement add label mutation
-    console.log("Add label:", name, description);
-  };
-
-  const handleDeleteLabel = (labelId: string): void => {
-    // TODO: Implement delete label mutation
-    console.log("Delete label:", labelId);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <LabelsDropdown
-              labels={labels}
-              onDeleteLabel={handleDeleteLabel}
-              onAddLabel={handleAddLabel}
-            />
+            <LabelsDropdown labels={labels} />
 
             <button
               onClick={handleLogout}
