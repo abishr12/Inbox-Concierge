@@ -1,7 +1,8 @@
+import uuid
+
 from fastapi import APIRouter, HTTPException
 from models.schemas import BucketCreate
-from services import storage_service, categorization_service
-import uuid
+from services import categorization_service, storage_service
 
 router = APIRouter()
 
@@ -38,23 +39,43 @@ async def add_bucket(bucket: BucketCreate):
     return []
 
 
-@router.delete("/{bucket_name}")
-async def remove_bucket(bucket_name: str):
+@router.post("/{bucket_id}")
+async def remove_bucket(bucket_id: str):
     buckets = storage_service.get_buckets()
-    
-    # Find bucket by name
-    bucket_to_remove = next((b for b in buckets if b["name"] == bucket_name), None)
+
+    # Find bucket by ID
+    bucket_to_remove = next((b for b in buckets if b["id"] == bucket_id), None)
     if not bucket_to_remove:
         raise HTTPException(status_code=404, detail="Bucket not found")
     
     buckets.remove(bucket_to_remove)
     storage_service.save_buckets(buckets)
-    
-    # Recategorize emails with updated buckets
-    emails = storage_service.get_emails()
-    if emails:
-        categorized_emails = await categorization_service.categorize_emails(emails, buckets)
-        storage_service.save_emails(categorized_emails)
-        return categorized_emails
-    
-    return []
+
+    # Only recategorize emails that were in the deleted bucket
+    all_emails = storage_service.get_emails()
+    if not all_emails:
+        return []
+
+    # Find emails that need recategorization
+    affected_emails = [e for e in all_emails if e.get("category_id") == bucket_id]
+
+    # If no emails were in the deleted bucket, return all emails unchanged
+    if not affected_emails:
+        return all_emails
+
+    # Recategorize only the affected emails
+    recategorized_emails = await categorization_service.categorize_emails(
+        affected_emails, buckets
+    )
+
+    # Create a lookup map of the recategorized results
+    recategorized_map = {e["id"]: e for e in recategorized_emails}
+
+    # Update the category fields in place for affected emails
+    for email in all_emails:
+        if email["id"] in recategorized_map:
+            email["category_id"] = recategorized_map[email["id"]]["category_id"]
+            email["category_name"] = recategorized_map[email["id"]]["category_name"]
+
+    storage_service.save_emails(all_emails)
+    return all_emails
