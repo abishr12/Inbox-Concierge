@@ -1,5 +1,8 @@
-from services.agents.categorization_agent import categorization_agent, CategorizationAgentDeps
-from models.schemas import EmailThread, Bucket
+from models.schemas import Bucket, EmailThread
+from services.agents.categorization_agent import (
+    CategorizationAgentDeps,
+    categorization_agent,
+)
 
 
 async def categorize_emails(emails: list[dict], buckets: list[dict]) -> list[dict]:
@@ -16,9 +19,13 @@ async def categorize_emails(emails: list[dict], buckets: list[dict]) -> list[dic
         )
     )
     
+    print("\n=== Categorization Agent Response ===")
+    print(f"Output type: {type(categorization_agent_response.output)}")
+    print(f"Output: {categorization_agent_response.output}")
+    
     # Map the results back to the email dicts (using .output instead of .data)
     result_map = {result.thread_id: result.bucket_id for result in categorization_agent_response.output}
-    
+
     # Update the emails with their categories
     categorized_emails = []
     for email in emails:
