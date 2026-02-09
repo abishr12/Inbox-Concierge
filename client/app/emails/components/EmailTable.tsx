@@ -31,10 +31,17 @@ export default function EmailTable({
   };
 
   const truncateEmail = (email: string): string => {
-    if (email.length > 25) {
-      return email.substring(0, 22) + "...";
+    if (email.length > 30) {
+      return email.substring(0, 27) + "...";
     }
     return email;
+  };
+
+  const truncateSnippet = (text: string, maxLength: number = 200): string => {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + "...";
+    }
+    return text;
   };
 
   return (
@@ -42,16 +49,16 @@ export default function EmailTable({
       <table className="w-full border-collapse">
         <thead className="sticky top-0 bg-gray-100 z-10">
           <tr>
-            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[15%]">
+            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[20%]">
               Label
             </th>
             <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[12%]">
               Date
             </th>
-            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[25%]">
+            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[30%]">
               From
             </th>
-            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[48%]">
+            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[38%]">
               Snippet
             </th>
           </tr>
@@ -76,13 +83,13 @@ export default function EmailTable({
               <td className="px-4 py-3 text-sm text-gray-900">
                 {truncateEmail(email.from)}
               </td>
-              <td className="px-4 py-3">
+              <td className="px-4 py-3 min-w-[300px]">
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-gray-900 break-words">
                     {email.subject}
                   </span>
-                  <span className="text-sm text-gray-600 truncate">
-                    {email.snippet}
+                  <span className="text-sm text-gray-600 break-words">
+                    {truncateSnippet(email.snippet)}
                   </span>
                 </div>
               </td>
