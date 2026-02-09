@@ -3,20 +3,19 @@ export interface EmailThread {
   subject: string;
   snippet: string;
   from: string;
-  to: string;
   date: string;
-  label: string;
+  label_id: string;
+  label_name: string;
 }
 
-export interface Label {
-  id: string;
-  name: string;
-  description: string;
+export interface Label extends Bucket {
   color: string;
 }
 
 export interface Bucket {
+  id: string;
   name: string;
+  description: string;
 }
 
 export interface AuthStatus {

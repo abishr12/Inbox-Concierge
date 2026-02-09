@@ -48,13 +48,10 @@ export default function EmailTable({
             <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[12%]">
               Date
             </th>
-            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[20%]">
+            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[25%]">
               From
             </th>
-            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[15%]">
-              To
-            </th>
-            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[38%]">
+            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[48%]">
               Snippet
             </th>
           </tr>
@@ -68,9 +65,9 @@ export default function EmailTable({
               <td className="px-4 py-3">
                 <span
                   className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white"
-                  style={{ backgroundColor: getLabelColor(email.label) }}
+                  style={{ backgroundColor: getLabelColor(email.label_name) }}
                 >
-                  {email.label}
+                  {email.label_name}
                 </span>
               </td>
               <td className="px-4 py-3 text-sm text-gray-600">
@@ -78,9 +75,6 @@ export default function EmailTable({
               </td>
               <td className="px-4 py-3 text-sm text-gray-900">
                 {truncateEmail(email.from)}
-              </td>
-              <td className="px-4 py-3 text-sm text-gray-600">
-                {truncateEmail(email.to)}
               </td>
               <td className="px-4 py-3">
                 <div className="flex flex-col">

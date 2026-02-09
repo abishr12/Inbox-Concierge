@@ -2,7 +2,7 @@
 
 import type { EmailThread, Label } from "@/types";
 import { generateRandomColor } from "@/utils/colors";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import EmailTable from "./components/EmailTable";
 import LabelsDropdown from "./components/LabelsDropdown";
 
@@ -184,32 +184,34 @@ const EmailPage = (): React.ReactElement => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <LabelsDropdown
-              labels={labels}
-              onDeleteLabel={handleDeleteLabel}
-              onAddLabel={handleAddLabel}
-            />
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <LabelsDropdown
+                labels={labels}
+                onDeleteLabel={handleDeleteLabel}
+                onAddLabel={handleAddLabel}
+              />
 
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              Logout
-            </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Logout
+              </button>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow">
-          <EmailTable emails={emails} labels={labels} />
-        </div>
-      </main>
-    </div>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-white rounded-lg shadow">
+            <EmailTable emails={emails} labels={labels} />
+          </div>
+        </main>
+      </div>
+    </Suspense>
   );
 };
 
