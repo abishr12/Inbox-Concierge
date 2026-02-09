@@ -30,8 +30,7 @@ categorization_agent = Agent(
 )
 
 @categorization_agent.instructions
-# TODO: Output Typing
-def instructions(ctx:RunContext[CategorizationAgentDeps]) -> List[dict]:
+def instructions(ctx: RunContext[CategorizationAgentDeps]) -> str:
     
     deps = ctx.deps
     emails = deps.emails

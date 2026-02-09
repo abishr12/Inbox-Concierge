@@ -5,7 +5,9 @@ from services.agents.categorization_agent import (
 )
 
 
-async def categorize_emails(emails: list[dict], buckets: list[dict]) -> list[dict]:
+async def categorize_emails(
+    emails: list[dict], buckets: list[dict]
+) -> list[EmailThread]:
     # Convert dicts to pydantic models
     email_threads = [EmailThread(**email) for email in emails]
     bucket_models = [Bucket(**bucket) for bucket in buckets]
