@@ -1,3 +1,4 @@
+import LoginButton from "./LoginButton";
 export default function LoginScreen(): React.ReactElement {
   return (
     <div className="min-h-screen flex items-center justify-center bg-amber-50">
@@ -9,9 +10,7 @@ export default function LoginScreen(): React.ReactElement {
           Streamline your inbox with intelligent automation for every email
           thread, categorized instantly.
         </p>
-        <button className="px-12 py-4 bg-gray-800 text-white text-lg rounded-full hover:bg-gray-700 transition-colors font-medium">
-          Sign In with Google
-        </button>
+        <LoginButton />
       </div>
     </div>
   );
