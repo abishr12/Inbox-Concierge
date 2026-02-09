@@ -46,19 +46,19 @@ export default function EmailTable({
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full border-collapse">
-        <thead className="sticky top-0 bg-gray-100 z-10">
+      <table className="w-full border-collapse bg-amber-100">
+        <thead className="sticky top-0 bg-amber-200 z-10">
           <tr>
-            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[20%]">
+            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b border-amber-300 w-[20%]">
               Label
             </th>
-            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[12%]">
+            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b border-amber-300 w-[12%]">
               Date
             </th>
-            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[30%]">
+            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b border-amber-300 w-[30%]">
               From
             </th>
-            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b w-[38%]">
+            <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b border-amber-300 w-[38%]">
               Snippet
             </th>
           </tr>
@@ -67,7 +67,7 @@ export default function EmailTable({
           {emails.map((email) => (
             <tr
               key={email.id}
-              className="border-b hover:bg-gray-50 cursor-pointer transition-colors"
+              className="border-b border-amber-200 hover:bg-amber-50 cursor-pointer transition-colors"
             >
               <td className="px-4 py-3">
                 <span
