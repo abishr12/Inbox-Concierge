@@ -2,7 +2,7 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query'
 import type { Bucket, Label } from '@/types'
-import { generateRandomColor } from '@/utils/colors'
+import { generateColorFromString } from '@/utils/colors'
 
 export function useBuckets() {
   return useSuspenseQuery({
@@ -14,10 +14,11 @@ export function useBuckets() {
       }
       const buckets: Bucket[] = await response.json()
       
-      // Transform buckets to labels by adding colors
+      // Transform buckets to labels by adding deterministic colors
+      // Use bucket ID for consistent colors across server/client renders
       const labels: Label[] = buckets.map((bucket) => ({
         ...bucket,
-        color: generateRandomColor(),
+        color: generateColorFromString(bucket.id),
       }))
       
       return labels
