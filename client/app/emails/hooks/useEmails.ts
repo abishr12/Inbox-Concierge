@@ -1,10 +1,10 @@
 'use client'
 
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import type { EmailThread } from '@/types'
 
 export function useEmails() {
-  return useSuspenseQuery({
+  return useQuery({
     queryKey: ['emails'],
     queryFn: async () => {
       const response = await fetch('http://localhost:8000/emails')

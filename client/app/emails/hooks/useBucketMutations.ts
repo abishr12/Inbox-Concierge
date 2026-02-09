@@ -34,10 +34,12 @@ export function useAddBucket() {
 
       return response.json()
     },
-    onSuccess: () => {
-      // Invalidate both buckets and emails queries to trigger refetch
-      queryClient.invalidateQueries({ queryKey: ['buckets'] })
-      queryClient.invalidateQueries({ queryKey: ['emails'] })
+    onSuccess: async () => {
+      // Refetch both buckets and emails queries immediately
+      await Promise.all([
+        queryClient.refetchQueries({ queryKey: ['buckets'] }),
+        queryClient.refetchQueries({ queryKey: ['emails'] })
+      ])
     },
   })
 }
@@ -58,10 +60,12 @@ export function useDeleteBucket() {
 
       return response.json()
     },
-    onSuccess: () => {
-      // Invalidate both buckets and emails queries to trigger refetch
-      queryClient.invalidateQueries({ queryKey: ['buckets'] })
-      queryClient.invalidateQueries({ queryKey: ['emails'] })
+    onSuccess: async () => {
+      // Refetch both buckets and emails queries immediately
+      await Promise.all([
+        queryClient.refetchQueries({ queryKey: ['buckets'] }),
+        queryClient.refetchQueries({ queryKey: ['emails'] })
+      ])
     },
   })
 }

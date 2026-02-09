@@ -2,6 +2,7 @@
 
 import { useBuckets } from "@/app/emails/hooks/useBuckets";
 import { useEmails } from "@/app/emails/hooks/useEmails";
+import { useIsMutating } from "@tanstack/react-query";
 import { Suspense } from "react";
 import EmailTable from "./components/EmailTable";
 import LabelsDropdown from "./components/LabelsDropdown";
@@ -18,19 +19,42 @@ function LoadingSpinner(): React.ReactElement {
 }
 
 function EmailPageContent(): React.ReactElement {
-  const { data: emails } = useEmails();
-  const { data: labels } = useBuckets();
+  const {
+    data: emails,
+    isPending: isEmailsPending,
+    isFetching: isEmailsFetching,
+  } = useEmails();
+  const {
+    data: labels,
+    isPending: isBucketsPending,
+    isFetching: isBucketsFetching,
+  } = useBuckets();
+
+  // Check if any mutations are currently running
+  const isMutating = useIsMutating() > 0;
 
   const handleLogout = (): void => {
     console.log("Logout clicked");
   };
+
+  // Show loading spinner on initial load, when refetching, or when mutations are running
+  const isLoading =
+    isEmailsPending ||
+    isEmailsFetching ||
+    isBucketsPending ||
+    isBucketsFetching ||
+    isMutating;
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <LabelsDropdown labels={labels} />
+            <LabelsDropdown labels={labels || []} />
 
             <button
               onClick={handleLogout}
@@ -44,7 +68,7 @@ function EmailPageContent(): React.ReactElement {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lg shadow">
-          <EmailTable emails={emails} labels={labels} />
+          <EmailTable emails={emails || []} labels={labels || []} />
         </div>
       </main>
     </div>
