@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class EmailThread(BaseModel):
@@ -9,7 +9,8 @@ class EmailThread(BaseModel):
     snippet: str
     from_: str = Field(alias="from")
     date: str
-    category: str
+    category_id: str
+    category_name: str
 
 
 class Bucket(BaseModel):

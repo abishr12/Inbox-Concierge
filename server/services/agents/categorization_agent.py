@@ -1,11 +1,11 @@
-from pydantic_ai import Agent, RunContext
-from pydantic import BaseModel
-from jinja2 import Environment, FileSystemLoader
+from dataclasses import dataclass
 from pathlib import Path
 from typing import List
-from dataclasses import dataclass
 
+from jinja2 import Environment, FileSystemLoader
 from models.schemas import Bucket, EmailThread
+from pydantic import BaseModel
+from pydantic_ai import Agent, RunContext
 
 # Set up Jinja2 environment
 # Path to prompts folder: server/services/prompts
@@ -15,6 +15,7 @@ jinja_env = Environment(loader=FileSystemLoader(template_dir))
 class EmailCategoryOutput(BaseModel):
     thread_id: str
     bucket_id: str
+    bucket_name: str
 
 @dataclass
 class CategorizationAgentDeps:

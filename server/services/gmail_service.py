@@ -66,7 +66,8 @@ def get_last_threads(credentials_dict: dict, num_threads: int) -> list[dict]:
             "snippet": snippet,
             "from": from_,
             "date": date,
-            "category": ""
+            "category_id": "",
+            "category_name": ""
         })
     
     return email_data

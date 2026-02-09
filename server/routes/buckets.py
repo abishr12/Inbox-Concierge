@@ -12,7 +12,7 @@ def get_buckets():
 
 
 @router.post("/")
-def add_bucket(bucket: BucketCreate):
+async def add_bucket(bucket: BucketCreate):
     buckets = storage_service.get_buckets()
     
     # Check if bucket name already exists
@@ -31,8 +31,7 @@ def add_bucket(bucket: BucketCreate):
     # Recategorize emails with updated buckets
     emails = storage_service.get_emails()
     if emails:
-        bucket_names = [b["name"] for b in buckets]
-        categorized_emails = categorization_service.categorize_emails(emails, bucket_names)
+        categorized_emails = await categorization_service.categorize_emails(emails, buckets)
         storage_service.save_emails(categorized_emails)
         return categorized_emails
     
@@ -40,7 +39,7 @@ def add_bucket(bucket: BucketCreate):
 
 
 @router.delete("/{bucket_name}")
-def remove_bucket(bucket_name: str):
+async def remove_bucket(bucket_name: str):
     buckets = storage_service.get_buckets()
     
     # Find bucket by name
@@ -54,8 +53,7 @@ def remove_bucket(bucket_name: str):
     # Recategorize emails with updated buckets
     emails = storage_service.get_emails()
     if emails:
-        bucket_names = [b["name"] for b in buckets]
-        categorized_emails = categorization_service.categorize_emails(emails, bucket_names)
+        categorized_emails = await categorization_service.categorize_emails(emails, buckets)
         storage_service.save_emails(categorized_emails)
         return categorized_emails
     
