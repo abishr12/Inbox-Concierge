@@ -1,7 +1,7 @@
 "use client";
 
-import { useBuckets } from "@/app/hooks/useBuckets";
-import { useEmails } from "@/app/hooks/useEmails";
+import { useBuckets } from "@/app/emails/hooks/useBuckets";
+import { useEmails } from "@/app/emails/hooks/useEmails";
 import { Suspense } from "react";
 import EmailTable from "./components/EmailTable";
 import LabelsDropdown from "./components/LabelsDropdown";

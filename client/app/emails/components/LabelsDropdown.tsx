@@ -1,18 +1,34 @@
 "use client";
 
 import type { Label } from "@/types";
-import { useEffect, useRef, useState } from "react";
+import {
+  startTransition,
+  useEffect,
+  useOptimistic,
+  useRef,
+  useState,
+} from "react";
+import { useAddBucket, useDeleteBucket } from "../hooks/useBucketMutations";
 
 interface LabelsDropdownProps {
   labels: Label[];
 }
 
-export default function LabelsDropdown({ labels }: LabelsDropdownProps): React.ReactElement {
+export default function LabelsDropdown({
+  labels,
+}: LabelsDropdownProps): React.ReactElement {
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const onDeleteLabel = (arg: string) => {};
-  const onAddLabel = (arg: string) => {};
+
+  const addBucket = useAddBucket();
+  const deleteBucket = useDeleteBucket();
+  const [optimisticLabels, setOptimisticLabels] = useOptimistic(
+    labels,
+    (currentLabels, labelIdToRemove: string) => {
+      return currentLabels.filter((label) => label.id !== labelIdToRemove);
+    },
+  );
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
@@ -38,7 +54,16 @@ export default function LabelsDropdown({ labels }: LabelsDropdownProps): React.R
   };
 
   const handleDelete = (labelId: string): void => {
-    onDeleteLabel(labelId);
+    startTransition(async () => {
+      setOptimisticLabels(labelId);
+
+      try {
+        await deleteBucket.mutateAsync(labelId);
+      } catch (error) {
+        // useOptimistic will automatically revert on error
+        console.error("Failed to delete label:", error);
+      }
+    });
   };
 
   const handleAddNewClick = (): void => {
@@ -51,8 +76,8 @@ export default function LabelsDropdown({ labels }: LabelsDropdownProps): React.R
   };
 
   const handleModalSubmit = (name: string, description: string): void => {
-    onAddLabel(name, description);
     setIsModalOpen(false);
+    addBucket.mutate({ name, description });
   };
 
   return (
@@ -85,13 +110,13 @@ export default function LabelsDropdown({ labels }: LabelsDropdownProps): React.R
             </div>
 
             <div className="max-h-64 overflow-y-auto">
-              {labels.length === 0 ? (
+              {optimisticLabels.length === 0 ? (
                 <div className="px-4 py-3 text-sm text-gray-500 text-center">
                   No labels yet
                 </div>
               ) : (
                 <div className="py-1">
-                  {labels.map((label) => (
+                  {optimisticLabels.map((label) => (
                     <div
                       key={label.id}
                       className="flex items-center justify-between px-4 py-2 hover:bg-gray-50"
@@ -107,10 +132,15 @@ export default function LabelsDropdown({ labels }: LabelsDropdownProps): React.R
                       </div>
                       <button
                         onClick={() => handleDelete(label.id)}
-                        className="ml-2 text-gray-400 hover:text-red-600 transition-colors"
+                        disabled={deleteBucket.isPending}
+                        className="ml-2 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         aria-label={`Delete ${label.name}`}
                       >
-                        ×
+                        {deleteBucket.isPending ? (
+                          <span className="inline-block animate-spin">⏳</span>
+                        ) : (
+                          "×"
+                        )}
                       </button>
                     </div>
                   ))}
@@ -121,7 +151,8 @@ export default function LabelsDropdown({ labels }: LabelsDropdownProps): React.R
             <div className="border-t border-gray-200">
               <button
                 onClick={handleAddNewClick}
-                className="w-full px-4 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 transition-colors"
+                disabled={addBucket.isPending || deleteBucket.isPending}
+                className="w-full px-4 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 + Add New Label
               </button>
@@ -135,6 +166,8 @@ export default function LabelsDropdown({ labels }: LabelsDropdownProps): React.R
           isOpen={isModalOpen}
           onClose={handleModalClose}
           onSubmit={handleModalSubmit}
+          isLoading={addBucket.isPending}
+          error={addBucket.error?.message}
         />
       )}
     </>
@@ -145,12 +178,16 @@ interface AddLabelModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (name: string, description: string) => void;
+  isLoading?: boolean;
+  error?: string;
 }
 
 function AddLabelModal({
   isOpen,
   onClose,
   onSubmit,
+  isLoading = false,
+  error: mutationError,
 }: AddLabelModalProps): React.ReactElement | null {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -180,7 +217,7 @@ function AddLabelModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">Add New Label</h2>
@@ -194,6 +231,12 @@ function AddLabelModal({
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {mutationError && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-600">{mutationError}</p>
+            </div>
+          )}
+
           <div>
             <label
               htmlFor="label-name"
@@ -209,7 +252,8 @@ function AddLabelModal({
                 setName(e.target.value);
                 setError("");
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={isLoading}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               placeholder="e.g., Important"
             />
             {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
@@ -227,7 +271,8 @@ function AddLabelModal({
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={isLoading}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               placeholder="e.g., Urgent items requiring attention"
             />
           </div>
@@ -236,15 +281,20 @@ function AddLabelModal({
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              Add Label
+              {isLoading && (
+                <span className="inline-block animate-spin">⏳</span>
+              )}
+              {isLoading ? "Adding..." : "Add Label"}
             </button>
           </div>
         </form>
