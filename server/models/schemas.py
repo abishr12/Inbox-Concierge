@@ -1,17 +1,21 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class EmailThread(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+    
     id: str
     subject: str
     snippet: str
-    from_: str
+    from_: str = Field(alias="from")
     date: str
     category: str
 
 
 class Bucket(BaseModel):
+    id: str
     name: str
+    description: str
 
 
 class AuthStatus(BaseModel):
@@ -21,3 +25,4 @@ class AuthStatus(BaseModel):
 
 class BucketCreate(BaseModel):
     name: str
+    description: str

@@ -5,7 +5,7 @@ router = APIRouter()
 
 
 @router.get("/")
-def get_emails():
+async def get_emails():
     session = storage_service.get_session()
     if not session:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -15,17 +15,15 @@ def get_emails():
         return cached_emails
     
     emails = gmail_service.get_last_threads(session, 10)
-    # buckets = storage_service.get_buckets()
-    # categorized_emails = categorization_service.categorize_emails(emails, buckets)
+    buckets = storage_service.get_buckets()
+    categorized_emails = await categorization_service.categorize_emails(emails, buckets)
     
-    # storage_service.save_emails(categorized_emails)
-    # return categorized_emails
-    print(emails)
-    return
+    storage_service.save_emails(categorized_emails)
+    return categorized_emails
 
 
 @router.post("/recategorize")
-def recategorize_emails():
+async def recategorize_emails():
     session = storage_service.get_session()
     if not session:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -35,7 +33,7 @@ def recategorize_emails():
         raise HTTPException(status_code=404, detail="No emails found")
     
     buckets = storage_service.get_buckets()
-    categorized_emails = categorization_service.categorize_emails(emails, buckets)
+    categorized_emails = await categorization_service.categorize_emails(emails, buckets)
     
     storage_service.save_emails(categorized_emails)
     return categorized_emails
