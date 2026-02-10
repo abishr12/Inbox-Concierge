@@ -1,4 +1,7 @@
 import type { EmailThread, Label } from "@/types";
+import { TableVirtuoso } from "react-virtuoso";
+import { useMemo, useCallback } from "react";
+import EmailRow from "./EmailRow";
 
 interface EmailTableProps {
   emails: EmailThread[];
@@ -9,46 +12,27 @@ export default function EmailTable({
   emails,
   labels,
 }: EmailTableProps): React.ReactElement {
-  const getLabelColor = (labelName: string): string => {
-    const label = labels.find((l) => l.name === labelName);
-    return label?.color || "#6b7280";
-  };
+  const labelColorMap = useMemo(() => {
+    const map = new Map<string, string>();
+    labels.forEach((label) => {
+      map.set(label.name, label.color);
+    });
+    return map;
+  }, [labels]);
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const isToday = date.toDateString() === today.toDateString();
-
-    if (isToday) {
-      return date.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      });
-    }
-
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  };
-
-  const truncateEmail = (email: string): string => {
-    if (email.length > 30) {
-      return email.substring(0, 27) + "...";
-    }
-    return email;
-  };
-
-  const truncateSnippet = (text: string, maxLength: number = 200): string => {
-    if (text.length > maxLength) {
-      return text.substring(0, maxLength) + "...";
-    }
-    return text;
-  };
+  const renderRow = useCallback(
+    (_index: number, email: EmailThread) => (
+      <EmailRow email={email} labelColorMap={labelColorMap} />
+    ),
+    [labelColorMap]
+  );
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse bg-amber-100">
-        <thead className="sticky top-0 bg-amber-200 z-10">
-          <tr>
+    <div className="h-[calc(100vh-12rem)]">
+      <TableVirtuoso
+        data={emails}
+        fixedHeaderContent={() => (
+          <tr className="bg-amber-200">
             <th className="text-left px-4 py-3 font-semibold text-sm text-gray-700 border-b border-amber-300 w-[20%]">
               Label
             </th>
@@ -62,41 +46,25 @@ export default function EmailTable({
               Snippet
             </th>
           </tr>
-        </thead>
-        <tbody>
-          {emails.map((email) => (
+        )}
+        itemContent={renderRow}
+        components={{
+          Table: (props) => (
+            <table
+              {...props}
+              className="w-full border-collapse bg-amber-100"
+              style={{ borderSpacing: 0 }}
+            />
+          ),
+          TableRow: (props) => (
             <tr
-              key={email.id}
-              className="border-b border-amber-200 hover:bg-amber-50 cursor-pointer transition-colors"
-            >
-              <td className="px-4 py-3">
-                <span
-                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white"
-                  style={{ backgroundColor: getLabelColor(email.label_name) }}
-                >
-                  {email.label_name}
-                </span>
-              </td>
-              <td className="px-4 py-3 text-sm text-gray-600">
-                {formatDate(email.date)}
-              </td>
-              <td className="px-4 py-3 text-sm text-gray-900">
-                {truncateEmail(email.from)}
-              </td>
-              <td className="px-4 py-3 min-w-[300px]">
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-gray-900 break-words">
-                    {email.subject}
-                  </span>
-                  <span className="text-sm text-gray-600 break-words">
-                    {truncateSnippet(email.snippet)}
-                  </span>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              {...props}
+              className="hover:bg-amber-50 cursor-pointer transition-colors"
+            />
+          ),
+        }}
+      />
     </div>
   );
 }
+

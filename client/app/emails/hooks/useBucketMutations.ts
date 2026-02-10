@@ -14,7 +14,7 @@ interface DeleteBucketResponse {
   deleted_bucket_name: string
 }
 
-export function useAddBucket() {
+export function useAddBucket(onRecategorize: () => Promise<void>) {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -34,15 +34,16 @@ export function useAddBucket() {
 
       return response.json()
     },
-    onSuccess: () => {
-      // Invalidate both buckets and emails queries to trigger refetch
-      queryClient.invalidateQueries({ queryKey: ['buckets'] })
-      queryClient.invalidateQueries({ queryKey: ['emails'] })
+    onSuccess: async () => {
+      // Refetch buckets immediately (fast, just reads JSON)
+      await queryClient.invalidateQueries({ queryKey: ['buckets'] })
+      // Trigger streaming recategorization
+      await onRecategorize()
     },
   })
 }
 
-export function useDeleteBucket() {
+export function useDeleteBucket(onRecategorize: () => Promise<void>) {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -58,10 +59,11 @@ export function useDeleteBucket() {
 
       return response.json()
     },
-    onSuccess: () => {
-      // Invalidate both buckets and emails queries to trigger refetch
-      queryClient.invalidateQueries({ queryKey: ['buckets'] })
-      queryClient.invalidateQueries({ queryKey: ['emails'] })
+    onSuccess: async () => {
+      // Refetch buckets immediately (fast, just reads JSON)
+      await queryClient.invalidateQueries({ queryKey: ['buckets'] })
+      // Trigger streaming recategorization
+      await onRecategorize()
     },
   })
 }

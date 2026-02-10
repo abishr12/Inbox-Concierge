@@ -32,12 +32,6 @@ function hashString(str: string): number {
   return Math.abs(hash);
 }
 
-// Generate random color (for backwards compatibility, but avoid in SSR contexts)
-export const generateRandomColor = (): string => {
-  const randomIndex = Math.floor(Math.random() * COLOR_PALETTE.length);
-  return COLOR_PALETTE[randomIndex];
-};
-
 // Generate deterministic color based on a string (e.g., bucket ID or name)
 // This ensures server and client always generate the same color
 export const generateColorFromString = (str: string): string => {

@@ -12,17 +12,19 @@ import { useAddBucket, useDeleteBucket } from "../hooks/useBucketMutations";
 
 interface LabelsDropdownProps {
   labels: Label[];
+  onRecategorize: () => Promise<void>;
 }
 
 export default function LabelsDropdown({
   labels,
+  onRecategorize,
 }: LabelsDropdownProps): React.ReactElement {
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const addBucket = useAddBucket();
-  const deleteBucket = useDeleteBucket();
+  const addBucket = useAddBucket(onRecategorize);
+  const deleteBucket = useDeleteBucket(onRecategorize);
   const [optimisticLabels, setOptimisticLabels] = useOptimistic(
     labels,
     (currentLabels, labelIdToRemove: string) => {

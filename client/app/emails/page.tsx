@@ -2,7 +2,6 @@
 
 import { useBuckets } from "@/app/emails/hooks/useBuckets";
 import { useEmails } from "@/app/emails/hooks/useEmails";
-import { useIsMutating } from "@tanstack/react-query";
 import { Suspense } from "react";
 import EmailTable from "./components/EmailTable";
 import LabelsDropdown from "./components/LabelsDropdown";
@@ -20,32 +19,24 @@ function LoadingSpinner(): React.ReactElement {
 
 function EmailPageContent(): React.ReactElement {
   const {
-    data: emails,
-    isPending: isEmailsPending,
-    isFetching: isEmailsFetching,
+    emails,
+    isStreaming,
+    isInitialLoad,
+    streamCount,
+    recategorize,
   } = useEmails();
+
   const {
     data: labels,
     isPending: isBucketsPending,
-    isFetching: isBucketsFetching,
   } = useBuckets();
-
-  // Check if any mutations are currently running
-  const isMutating = useIsMutating() > 0;
 
   const handleLogout = (): void => {
     console.log("Logout clicked");
   };
 
-  // Show loading spinner on initial load, when refetching, or when mutations are running
-  const isLoading =
-    isEmailsPending ||
-    isEmailsFetching ||
-    isBucketsPending ||
-    isBucketsFetching ||
-    isMutating;
-
-  if (isLoading) {
+  // Only show full loading spinner before ANY data arrives
+  if (isInitialLoad || isBucketsPending) {
     return <LoadingSpinner />;
   }
 
@@ -54,7 +45,10 @@ function EmailPageContent(): React.ReactElement {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <LabelsDropdown labels={labels || []} />
+            <LabelsDropdown
+              labels={labels || []}
+              onRecategorize={recategorize}
+            />
 
             <button
               onClick={handleLogout}
@@ -68,7 +62,17 @@ function EmailPageContent(): React.ReactElement {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lg shadow">
-          <EmailTable emails={emails || []} labels={labels || []} />
+          {isStreaming && (
+            <div className="flex items-center gap-3 p-4 bg-blue-50 border-b border-blue-200">
+              <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              <p className="text-sm text-blue-800">
+                {streamCount === 0
+                  ? "Categorizing emails..."
+                  : `Categorizing emails... (${streamCount} ready)`}
+              </p>
+            </div>
+          )}
+          <EmailTable emails={emails} labels={labels || []} />
         </div>
       </main>
     </div>

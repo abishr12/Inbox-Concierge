@@ -7,18 +7,21 @@ from services.agents.categorization_agent import (
 
 async def categorize_emails(
     emails: list[dict], buckets: list[dict]
-) -> list[EmailThread]:
-    # Convert dicts to pydantic models
-    email_threads = [EmailThread(**email) for email in emails]
-    bucket_models = [Bucket(**bucket) for bucket in buckets]
+) -> list[dict]:
+    """Categorize a list of emails against the given buckets via a single LLM call.
 
-    # Run the categorization agent
+    Callers are responsible for batching — this function processes
+    whatever list it receives in one pass.
+    """
+    bucket_models = [Bucket(**bucket) for bucket in buckets]
+    email_threads = [EmailThread(**email) for email in emails]
+
     categorization_agent_response = await categorization_agent.run(
         "Categorize the following emails into the appropriate bucket",
         deps=CategorizationAgentDeps(emails=email_threads, buckets=bucket_models),
     )
 
-    # Map the results back to the email dicts (using .output instead of .data)
+    # Map the results back
     result_map = {
         result.thread_id: {
             "bucket_id": result.bucket_id,
@@ -27,8 +30,8 @@ async def categorize_emails(
         for result in categorization_agent_response.output
     }
 
-    # Update the emails with their categories
-    categorized_emails = []
+    # Update emails with categories
+    categorized = []
     for email in emails:
         email_copy = email.copy()
         label = result_map.get(email["id"], {})
@@ -38,7 +41,6 @@ async def categorize_emails(
                 "label_name": label.get("bucket_name", ""),
             }
         )
+        categorized.append(email_copy)
 
-        categorized_emails.append(email_copy)
-
-    return categorized_emails
+    return categorized
